@@ -1,11 +1,26 @@
 import numpy as np
+import itertools
+
 from collections import defaultdict
 from pychem.util.matrix import nullspace
 
 class Molecule(object):
   def __init__(self, components):
-    # List of element, count or molecule, count tuples.
-    self.components = components
+    condensed = defaultdict(int)
+    for el, count in components:
+      condensed[el] += count
+
+    # Tuple of element, count or molecule, count tuples.
+    self.components = tuple((el, count) for el, count in condensed.iteritems())
+
+  def __hash__(self):
+    return self.components.__hash__()
+
+  def __eq__(self, other):
+    return frozenset(self.components) == frozenset(other.components)
+
+  def __ne__(self, other):
+    return not self.__eq__(other)
 
   def __repr__(self):
     return "molecule:" + repr(self.components)
@@ -28,7 +43,7 @@ class Molecule(object):
         s += item.atomic_mass * count
     return s
 
-  def element_stats(self, mult):
+  def element_stats(self, mult=1):
     s = defaultdict(int)
     for item, count in self.components:
       if type(item) == Molecule:
@@ -44,8 +59,17 @@ class Molecule(object):
 
 class Formula(object):
   def __init__(self, molecules):
-    # List of molecule, count tuples.
-    self.molecules = molecules
+    # Tuple of molecule, count tuples.
+    self.molecules = tuple(molecules)
+
+  def __hash__(self):
+    return self.molecules.__hash__()
+
+  def __eq__(self, other):
+    return frozenset(self.molecules) == frozenset(other.molecules)
+
+  def __ne__(self, other):
+    return not self.__eq__(other)
 
   def __repr__(self):
     return "formula:" + repr(self.molecules)
@@ -61,12 +85,14 @@ class Formula(object):
 
 class Equality(object):
   def __init__(self, left, right):
+    # Mutable left and right formulas.
     self.left = left
     self.right = right
 
   def balance(self):
     lstats = [m.element_stats(c) for m, c in self.left]
     rstats = [m.element_stats(c) for m, c in self.right]
+    offset = len(lstats)
 
     # Calculate element mapping
     mapping = {}
@@ -87,7 +113,6 @@ class Equality(object):
       for e, c in s.iteritems():
         mat[mapping[e]][j] = c
         
-    offset = len(lstats)
     for j, s in enumerate(rstats):
       for e, c in s.iteritems():
         mat[mapping[e]][offset + j] = -c
@@ -95,7 +120,22 @@ class Equality(object):
     ns = nullspace(mat)
     l = ns.T[0].tolist()
     mns = min(l, key=lambda v: abs(v))
-    return self.__normalize([e / mns for e in l])
+
+    coefs = self.__normalize([e / mns for e in l])
+    
+    nl = []
+    nr = []
+
+    for i in xrange(offset):
+      m, oldc = self.left[i]
+      nl.append((m, coefs[i]))
+
+    for i in xrange(len(coefs) - offset):
+      m, oldc = self.right[i]
+      nr.append((m, coefs[offset + i]))
+
+    self.left = Formula(nl)
+    self.right = Formula(nr)
 
   def __normalize(self, l, tol=1e-6):
     done = False

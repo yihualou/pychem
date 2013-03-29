@@ -2,7 +2,7 @@ from ply import lex, yacc
 from models import Molecule, Formula, Equality
 
 class FormulaParser(object):
-  def parse(self, table, formula):
+  def parse(self, table, s):
     tokens = ("SYMBOL", "COUNT", "ADD", "EQUALS", "LPAREN", "RPAREN")
     t_ADD = "\s*\+\s*"
     t_EQUALS = "\s*=\s*"
@@ -29,22 +29,20 @@ class FormulaParser(object):
       chemical_equation : chemical_formula
       chemical_equation : chemical_formula EQUALS chemical_formula
       """
-      if len(p) == 1:
-        p[0] = p[1]
+      if len(p) == 2:
+        p[0] = Formula(p[1])
       else:
-        p[0] = Equality(p[1], p[3])
+        p[0] = Equality(Formula(p[1]), Formula(p[3]))
 
     def p_chemical_formula(p):
       """
       chemical_formula : molecule
       chemical_formula : chemical_formula ADD molecule
       """
-      if len(p) == 2:
-        p[0] = Formula([p[1]])
+      if len(p) == 4:
+        p[0] = p[1] + [p[3]]
       else:
-        formula = p[1]
-        formula.molecules.append(p[3])
-        p[0] = formula
+        p[0] = [p[1]]
 
     def p_molecule_species(p):
       """
@@ -86,7 +84,7 @@ class FormulaParser(object):
       print "Syntax error at '%s'" % p.value
 
     yacc.yacc()
-    return yacc.parse(formula)
+    return yacc.parse(s)
 
   def __compute_symbols(self, table):
     l = [abbr for abbr in table]

@@ -21,7 +21,7 @@ class TestEquality(unittest.TestCase):
       "Al2(CO3)3 + H3PO4 = AlPO4 + CO2 + H2O"
     ]
 
-    coef = [
+    coefs = [
       [1, 8, 5, 6],
       [1, 2, 1, 1],
       [3, 2, 1, 6],
@@ -33,4 +33,8 @@ class TestEquality(unittest.TestCase):
 
     for i, test in enumerate(tests):
       equality = TestEquality.fp.parse(TestEquality.pt, test)
-      self.assertEquals(equality.balance(), coef[i])
+      equality.balance()
+      cs = [c for m, c in equality.left] + [c for m, c in equality.right]
+
+      self.assertTrue(equality.is_balanced())
+      self.assertEquals(cs, coefs[i])
