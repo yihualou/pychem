@@ -1,0 +1,305 @@
+Created by PLY version 3.4 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> chemical_equation
+Rule 1     chemical_equation -> chemical_formula
+Rule 2     chemical_equation -> chemical_formula EQUALS chemical_formula
+Rule 3     chemical_formula -> molecule
+Rule 4     chemical_formula -> chemical_formula ADD molecule
+Rule 5     molecule -> COUNT LPAREN species_list RPAREN
+Rule 6     molecule -> species_list
+Rule 7     species_list -> species_list species
+Rule 8     species_list -> species
+Rule 9     species -> LPAREN species_list RPAREN COUNT
+Rule 10    species -> SYMBOL
+Rule 11    species -> SYMBOL COUNT
+
+Terminals, with rules where they appear
+
+ADD                  : 4
+COUNT                : 5 9 11
+EQUALS               : 2
+LPAREN               : 5 9
+RPAREN               : 5 9
+SYMBOL               : 10 11
+error                : 
+
+Nonterminals, with rules where they appear
+
+chemical_equation    : 0
+chemical_formula     : 1 2 2 4
+molecule             : 3 4
+species              : 7 8
+species_list         : 5 6 7 9
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . chemical_equation
+    (1) chemical_equation -> . chemical_formula
+    (2) chemical_equation -> . chemical_formula EQUALS chemical_formula
+    (3) chemical_formula -> . molecule
+    (4) chemical_formula -> . chemical_formula ADD molecule
+    (5) molecule -> . COUNT LPAREN species_list RPAREN
+    (6) molecule -> . species_list
+    (7) species_list -> . species_list species
+    (8) species_list -> . species
+    (9) species -> . LPAREN species_list RPAREN COUNT
+    (10) species -> . SYMBOL
+    (11) species -> . SYMBOL COUNT
+
+    COUNT           shift and go to state 1
+    LPAREN          shift and go to state 6
+    SYMBOL          shift and go to state 2
+
+    chemical_equation              shift and go to state 4
+    species                        shift and go to state 7
+    molecule                       shift and go to state 3
+    species_list                   shift and go to state 5
+    chemical_formula               shift and go to state 8
+
+state 1
+
+    (5) molecule -> COUNT . LPAREN species_list RPAREN
+
+    LPAREN          shift and go to state 9
+
+
+state 2
+
+    (10) species -> SYMBOL .
+    (11) species -> SYMBOL . COUNT
+
+    RPAREN          reduce using rule 10 (species -> SYMBOL .)
+    LPAREN          reduce using rule 10 (species -> SYMBOL .)
+    SYMBOL          reduce using rule 10 (species -> SYMBOL .)
+    EQUALS          reduce using rule 10 (species -> SYMBOL .)
+    ADD             reduce using rule 10 (species -> SYMBOL .)
+    $end            reduce using rule 10 (species -> SYMBOL .)
+    COUNT           shift and go to state 10
+
+
+state 3
+
+    (3) chemical_formula -> molecule .
+
+    EQUALS          reduce using rule 3 (chemical_formula -> molecule .)
+    ADD             reduce using rule 3 (chemical_formula -> molecule .)
+    $end            reduce using rule 3 (chemical_formula -> molecule .)
+
+
+state 4
+
+    (0) S' -> chemical_equation .
+
+
+
+state 5
+
+    (6) molecule -> species_list .
+    (7) species_list -> species_list . species
+    (9) species -> . LPAREN species_list RPAREN COUNT
+    (10) species -> . SYMBOL
+    (11) species -> . SYMBOL COUNT
+
+    EQUALS          reduce using rule 6 (molecule -> species_list .)
+    ADD             reduce using rule 6 (molecule -> species_list .)
+    $end            reduce using rule 6 (molecule -> species_list .)
+    LPAREN          shift and go to state 6
+    SYMBOL          shift and go to state 2
+
+    species                        shift and go to state 11
+
+state 6
+
+    (9) species -> LPAREN . species_list RPAREN COUNT
+    (7) species_list -> . species_list species
+    (8) species_list -> . species
+    (9) species -> . LPAREN species_list RPAREN COUNT
+    (10) species -> . SYMBOL
+    (11) species -> . SYMBOL COUNT
+
+    LPAREN          shift and go to state 6
+    SYMBOL          shift and go to state 2
+
+    species_list                   shift and go to state 12
+    species                        shift and go to state 7
+
+state 7
+
+    (8) species_list -> species .
+
+    LPAREN          reduce using rule 8 (species_list -> species .)
+    SYMBOL          reduce using rule 8 (species_list -> species .)
+    EQUALS          reduce using rule 8 (species_list -> species .)
+    ADD             reduce using rule 8 (species_list -> species .)
+    $end            reduce using rule 8 (species_list -> species .)
+    RPAREN          reduce using rule 8 (species_list -> species .)
+
+
+state 8
+
+    (1) chemical_equation -> chemical_formula .
+    (2) chemical_equation -> chemical_formula . EQUALS chemical_formula
+    (4) chemical_formula -> chemical_formula . ADD molecule
+
+    $end            reduce using rule 1 (chemical_equation -> chemical_formula .)
+    EQUALS          shift and go to state 14
+    ADD             shift and go to state 13
+
+
+state 9
+
+    (5) molecule -> COUNT LPAREN . species_list RPAREN
+    (7) species_list -> . species_list species
+    (8) species_list -> . species
+    (9) species -> . LPAREN species_list RPAREN COUNT
+    (10) species -> . SYMBOL
+    (11) species -> . SYMBOL COUNT
+
+    LPAREN          shift and go to state 6
+    SYMBOL          shift and go to state 2
+
+    species_list                   shift and go to state 15
+    species                        shift and go to state 7
+
+state 10
+
+    (11) species -> SYMBOL COUNT .
+
+    RPAREN          reduce using rule 11 (species -> SYMBOL COUNT .)
+    LPAREN          reduce using rule 11 (species -> SYMBOL COUNT .)
+    SYMBOL          reduce using rule 11 (species -> SYMBOL COUNT .)
+    EQUALS          reduce using rule 11 (species -> SYMBOL COUNT .)
+    ADD             reduce using rule 11 (species -> SYMBOL COUNT .)
+    $end            reduce using rule 11 (species -> SYMBOL COUNT .)
+
+
+state 11
+
+    (7) species_list -> species_list species .
+
+    LPAREN          reduce using rule 7 (species_list -> species_list species .)
+    SYMBOL          reduce using rule 7 (species_list -> species_list species .)
+    EQUALS          reduce using rule 7 (species_list -> species_list species .)
+    ADD             reduce using rule 7 (species_list -> species_list species .)
+    $end            reduce using rule 7 (species_list -> species_list species .)
+    RPAREN          reduce using rule 7 (species_list -> species_list species .)
+
+
+state 12
+
+    (9) species -> LPAREN species_list . RPAREN COUNT
+    (7) species_list -> species_list . species
+    (9) species -> . LPAREN species_list RPAREN COUNT
+    (10) species -> . SYMBOL
+    (11) species -> . SYMBOL COUNT
+
+    RPAREN          shift and go to state 16
+    LPAREN          shift and go to state 6
+    SYMBOL          shift and go to state 2
+
+    species                        shift and go to state 11
+
+state 13
+
+    (4) chemical_formula -> chemical_formula ADD . molecule
+    (5) molecule -> . COUNT LPAREN species_list RPAREN
+    (6) molecule -> . species_list
+    (7) species_list -> . species_list species
+    (8) species_list -> . species
+    (9) species -> . LPAREN species_list RPAREN COUNT
+    (10) species -> . SYMBOL
+    (11) species -> . SYMBOL COUNT
+
+    COUNT           shift and go to state 1
+    LPAREN          shift and go to state 6
+    SYMBOL          shift and go to state 2
+
+    species                        shift and go to state 7
+    molecule                       shift and go to state 17
+    species_list                   shift and go to state 5
+
+state 14
+
+    (2) chemical_equation -> chemical_formula EQUALS . chemical_formula
+    (3) chemical_formula -> . molecule
+    (4) chemical_formula -> . chemical_formula ADD molecule
+    (5) molecule -> . COUNT LPAREN species_list RPAREN
+    (6) molecule -> . species_list
+    (7) species_list -> . species_list species
+    (8) species_list -> . species
+    (9) species -> . LPAREN species_list RPAREN COUNT
+    (10) species -> . SYMBOL
+    (11) species -> . SYMBOL COUNT
+
+    COUNT           shift and go to state 1
+    LPAREN          shift and go to state 6
+    SYMBOL          shift and go to state 2
+
+    species                        shift and go to state 7
+    molecule                       shift and go to state 3
+    species_list                   shift and go to state 5
+    chemical_formula               shift and go to state 18
+
+state 15
+
+    (5) molecule -> COUNT LPAREN species_list . RPAREN
+    (7) species_list -> species_list . species
+    (9) species -> . LPAREN species_list RPAREN COUNT
+    (10) species -> . SYMBOL
+    (11) species -> . SYMBOL COUNT
+
+    RPAREN          shift and go to state 19
+    LPAREN          shift and go to state 6
+    SYMBOL          shift and go to state 2
+
+    species                        shift and go to state 11
+
+state 16
+
+    (9) species -> LPAREN species_list RPAREN . COUNT
+
+    COUNT           shift and go to state 20
+
+
+state 17
+
+    (4) chemical_formula -> chemical_formula ADD molecule .
+
+    EQUALS          reduce using rule 4 (chemical_formula -> chemical_formula ADD molecule .)
+    ADD             reduce using rule 4 (chemical_formula -> chemical_formula ADD molecule .)
+    $end            reduce using rule 4 (chemical_formula -> chemical_formula ADD molecule .)
+
+
+state 18
+
+    (2) chemical_equation -> chemical_formula EQUALS chemical_formula .
+    (4) chemical_formula -> chemical_formula . ADD molecule
+
+    $end            reduce using rule 2 (chemical_equation -> chemical_formula EQUALS chemical_formula .)
+    ADD             shift and go to state 13
+
+
+state 19
+
+    (5) molecule -> COUNT LPAREN species_list RPAREN .
+
+    EQUALS          reduce using rule 5 (molecule -> COUNT LPAREN species_list RPAREN .)
+    ADD             reduce using rule 5 (molecule -> COUNT LPAREN species_list RPAREN .)
+    $end            reduce using rule 5 (molecule -> COUNT LPAREN species_list RPAREN .)
+
+
+state 20
+
+    (9) species -> LPAREN species_list RPAREN COUNT .
+
+    RPAREN          reduce using rule 9 (species -> LPAREN species_list RPAREN COUNT .)
+    LPAREN          reduce using rule 9 (species -> LPAREN species_list RPAREN COUNT .)
+    SYMBOL          reduce using rule 9 (species -> LPAREN species_list RPAREN COUNT .)
+    EQUALS          reduce using rule 9 (species -> LPAREN species_list RPAREN COUNT .)
+    ADD             reduce using rule 9 (species -> LPAREN species_list RPAREN COUNT .)
+    $end            reduce using rule 9 (species -> LPAREN species_list RPAREN COUNT .)
+
